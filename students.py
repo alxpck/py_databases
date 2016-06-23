@@ -1,17 +1,28 @@
 from peewee import *
-
+# via https://teamtreehouse.com/community/how-do-you-do-this-part-using-mysql-instead-of-the-workspace-please-help
+from playhouse.db_url import connect
 
 # SQLite connection
 # db = SqliteDatabase('students.db')
 
 # MySQL connection
-mysql_db = MySQLDatabase('my_students.db')
+db = MySQLDatabase('students.db')
 
-class BaseModel(Model):
-	"""A base model that will use our MySQL database"""
+# via https://teamtreehouse.com/community/how-do-you-do-this-part-using-mysql-instead-of-the-workspace-please-help
+db = connect('mysql://root:pass123@127.0.0.1:3306/py_databases_treehouse')
+
+class Student(Model):
+	# Always make the model name singular, because
+	# the model represents a single item in the database
+	username = CharField(max_length=255, unique=True)
+	points = IntegerField(default=0)
+
 	class Meta:
-		database = mysql_db
+		# This isn't a metaclass, it's just a class 
+		# named Meta
+		database = db
 
-class User(BaseModel):
-	username = CharField()
-	# etc etc
+if __name__ == '__main__':
+	db.connect()
+	db.create_tables([Student], safe=True)
+	# safe=True is like IF EXISTS or IF NOT EXISTS
