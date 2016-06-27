@@ -1,15 +1,15 @@
 from peewee import *
-# via https://teamtreehouse.com/community/how-do-you-do-this-part-using-mysql-instead-of-the-workspace-please-help
-from playhouse.db_url import connect
+# from playhouse.db_url import connect
 
 # SQLite connection
 # db = SqliteDatabase('students.db')
 
 # MySQL connection
-db = MySQLDatabase('students.db')
+db = MySQLDatabase("students", user="root", passwd="pass123")
 
-# via https://teamtreehouse.com/community/how-do-you-do-this-part-using-mysql-instead-of-the-workspace-please-help
-db = connect('mysql://root:pass123@127.0.0.1:3306/py_databases_treehouse')
+# host="127.0.0.1:3306"
+# db = connect('mysql://root:pass123@127.0.0.1:3306/students')
+
 
 class Student(Model):
 	# Always make the model name singular, because
