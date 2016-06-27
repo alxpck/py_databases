@@ -24,13 +24,13 @@ class Student(Model):
 
 students = [
 	{'username': 'alexpeck',
-	'points': 4888},
+	'points': 400888},
 	{'username': 'chalkers',
 	'points': 11912},
 	{'username': 'kennethlove',
 	'points': 4079},
 	{'username': 'joeschmoe',
-	'points': 407029},
+	'points': 29},
 	{'username': 'davemcfarland',
 	'points': 14172}
 ]
@@ -49,10 +49,17 @@ def add_students():
 			student_record.points = student['points']
 			student_record.save()
 
+def top_student():
+	"""Find the student with the highest score"""
+	# Get all the students, sort by the points in descendin order and GET only the first result
+	student = Student.select().order_by(Student.points.desc()).get()
+	return student
+
 
 if __name__ == '__main__':
 	db.connect()
 	db.create_tables([Student], safe=True)
 	# add students to the database
 	add_students()
+	print("Our top student right now is: {0.username}.".format(top_student()))
 	# safe=True is like IF EXISTS or IF NOT EXISTS
