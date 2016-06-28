@@ -54,7 +54,16 @@ def menu_loop():
 
 def add_entry():
 	"""Add an entry."""
+	print("Enter your entry. Press Control + D when finished.")
+	# Sys's standard in stdin will pull in all the keyboard strokes that a user types (including a history of deleted characters?). The read function will read the results of standard in, and the strip function will stip out whitespace from either the front or the back of the data (but not from between words or characters). 
+	data = sys.stdin.read().strip()
 
+	# check to see if there is data, if there is...
+	if data:
+		# prompt the user for input with a statement asking if they'd like to save their input, use the lower function to lowercase the result, and use a conditional operator to only proceed if the input does not equal 'n'
+		if input('Save entry? [Yn] ').lower() != 'n':
+			Entries.create(content=data)
+			print("Saved successfully!")
 
 def view_entries():
 	"""View previous entries."""
