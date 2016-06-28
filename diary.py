@@ -1,6 +1,10 @@
 #!/usr/bin/env python
+# stuff that comes from Python, alphabetized
 from collections import OrderedDict
 import datetime
+import sys
+
+# stuff that comes from a third-party, alphabetized
 from peewee import *
 
 # collections is a part of the standard Python library and 
