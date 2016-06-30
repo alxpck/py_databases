@@ -16,6 +16,7 @@ from peewee import *
 db = MySQLDatabase("diary", user="root", passwd="pass123")
 
 # This must match the name of the database table
+# I changed it from Entry(Model) because I wanted the databaes in SQL to be plural since it contains multiple entries, but as I start to work with the code in Python now I want the class to be singular and the database to be plural, but if anything it's probably better to keep the Python code setup to match the singular/plural rules because that's what I'm actually interacting with as I query the database
 class Entries(Model):
 	# content
 	# We're not using a VARCHAR because varchar's require a max length, and we don't want to explicitly define a limit. 
@@ -65,8 +66,44 @@ def add_entry():
 			Entries.create(content=data)
 			print("Saved successfully!")
 
-def view_entries():
+def view_entries(search_query=None):
 	"""View previous entries."""
+	# SELECT SQL, ORDER BY the timestamp we created in the Entries model / class when the entry is added to the database
+	entries_list = Entries.select().order_by(Entries.timestamp.desc())
+
+	# filter only if we're passed a search query
+	if search_query:
+		# set the entries list to be a subset of the the entries list where the entries contain the search query.
+		# in SQL this would look like this --- SELECT * FROM entries WHERE content LIKE '%search_query%' ORDER BY timestamp DESC
+		# There's a big part of me that would like to use a database handler for Python that lets me write plain SQL because then I get to strengthen my SQL muscles as well as my python muscles. And that makes me a more robust programmer. 
+		entries_list = entries_list.where(Entries.content.contains(search_query))
+
+	# iterate through the entries list
+	for entry in entries_list:
+		# convert the datetime objects to strings
+		timestamp = entry.timestamp.strftime('%A %B %d, %Y %I:%M%p')
+		# print the time string
+		print(timestamp)
+		# print "==========" a dividing line of equal signs that's the same length as the timestamp. This is a great hacky little shortcut for formatting
+		print('='*len(timestamp))
+		# print the content of the post. Just like we had access to the timestamp from the Entries class we also have access to the content. This is actually teaching me more about object-oriented design/programming than databases, but c'est la vie.
+		print(entry.content)
+		print('n) next entry') 
+		print('q) return to main menu') # I feel like this should be 'r' and not 'q'
+
+		# collect input from the user and save it as a variable after transforming it to lowercase and stripping white space from the front and end of the string
+		# 'N' is capitalized because it's our default step, it's just a design nudge to the user that this is the default thing to do.
+		next_action = input('Action: [Nq] ').lower().strip()
+		if next_action == 'q':
+			break # break our for loop
+			# we don't have to explicitly program an action for 'n' because 'next entry' is handled by the for loop. Anything ('n', 'az' 'afja;f') that's not 'q' will move us on to the next entry. 
+			# What would be nice from a user perspective is to know when we're at the last entry and send a message saying 'no more entries' instead of just showing blank entries/menus. 
+
+def search_entries():
+	"""Search the entries for a string."""
+	# call the view entries function, and prompt the user for input which we pass into the view_entries function as the search query.
+	# this is really smart and compact code compared to what I'm building. Especially in the way that user input is woven into the functions.
+	view_entries(input('Search query: '))
 
 
 def delete_entry(entry):
@@ -77,7 +114,8 @@ def delete_entry(entry):
 # We're using an OrderedDict as an "alternate switch" an alternate switch is a programming concept that's not natively supported in Python so we're creating a workaround
 menu = OrderedDict([
 	('a', add_entry),
-	('v', view_entries) # did not add a comma
+	('v', view_entries),
+	('s', search_entries),
 ])
 
 if __name__ == '__main__':
