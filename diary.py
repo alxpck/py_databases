@@ -88,16 +88,19 @@ def view_entries(search_query=None):
 		print('='*len(timestamp))
 		# print the content of the post. Just like we had access to the timestamp from the Entries class we also have access to the content. This is actually teaching me more about object-oriented design/programming than databases, but c'est la vie.
 		print(entry.content)
-		print('n) next entry') 
+		print('n) next entry')
+		print('d) delete entry') 
 		print('q) return to main menu') # I feel like this should be 'r' and not 'q'
 
 		# collect input from the user and save it as a variable after transforming it to lowercase and stripping white space from the front and end of the string
 		# 'N' is capitalized because it's our default step, it's just a design nudge to the user that this is the default thing to do.
-		next_action = input('Action: [Nq] ').lower().strip()
+		next_action = input('Action: [Ndq] ').lower().strip()
 		if next_action == 'q':
 			break # break our for loop
 			# we don't have to explicitly program an action for 'n' because 'next entry' is handled by the for loop. Anything ('n', 'az' 'afja;f') that's not 'q' will move us on to the next entry. 
 			# What would be nice from a user perspective is to know when we're at the last entry and send a message saying 'no more entries' instead of just showing blank entries/menus. 
+		elif next_action == 'd':
+			delete_entry(entry)
 
 def search_entries():
 	"""Search the entries for a string."""
@@ -108,6 +111,11 @@ def search_entries():
 
 def delete_entry(entry):
 	"""Delete an entry."""
+	# add a safeguard by asking a second time if they want to delete the entry
+	if input("Are you sure? [yN] ").lower() == 'y':
+		# delete_instance is baked into peewee
+		entry.delete_instance()
+		print("Entry deleted!")
 
 # add items as a list of tuples
 # remember to place this in the script on a line that comes after I've defined the functions
