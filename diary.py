@@ -2,6 +2,7 @@
 # stuff that comes from Python, alphabetized
 from collections import OrderedDict
 import datetime
+import os
 import sys
 
 # stuff that comes from a third-party, alphabetized
@@ -34,12 +35,19 @@ def initialize():
 	# different than the tutorial, but I like to make the tables plural of the things they will contain
 	db.create_tables([Entries], safe=True)
 
+def clear():
+	"""Clear the screen."""
+	# use the terminal to clear the screen. cls on windows and clear for mac/linux
+	os.system('cls' if os.name == 'nt' else 'clear')
+
+
 def menu_loop():
 	"""Show the menu"""
 	# our way of setting a variable without giving it a value
 	choice = None
 
 	while choice != 'q':
+		clear()
 		print("Enter 'q' to quit.")
 		for key, value in menu.items():
 			# a) Add an entry. 
@@ -48,6 +56,7 @@ def menu_loop():
 		choice = input('Action: ').lower().strip()
 
 		if choice in menu:
+			clear()
 			# this is the tricky bit
 			# it uses choice (a single letter) to pull up the corresponding function from the menu
 			# the parenthesis at the end of menu[choice] are appended to the function name in menu? And/Or they are a trigger telling us to run whatever function is chosen by menu
@@ -82,12 +91,16 @@ def view_entries(search_query=None):
 	for entry in entries_list:
 		# convert the datetime objects to strings
 		timestamp = entry.timestamp.strftime('%A %B %d, %Y %I:%M%p')
+		# clear the screen
+		clear()
 		# print the time string
 		print(timestamp)
 		# print "==========" a dividing line of equal signs that's the same length as the timestamp. This is a great hacky little shortcut for formatting
 		print('='*len(timestamp))
 		# print the content of the post. Just like we had access to the timestamp from the Entries class we also have access to the content. This is actually teaching me more about object-oriented design/programming than databases, but c'est la vie.
 		print(entry.content)
+		# format the breaks between posts
+		print('\n\n'+'='*len(timestamp))
 		print('n) next entry')
 		print('d) delete entry') 
 		print('q) return to main menu') # I feel like this should be 'r' and not 'q'
